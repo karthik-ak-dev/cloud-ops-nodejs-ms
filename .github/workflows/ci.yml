@@ -7,10 +7,10 @@ on:
     branches: [ main, develop ]
 
 env:
-  AWS_REGION: eu-west-3  # Update with your AWS region
-  # INFRA_GIT_REPO: owner/infrastructure-repo  # Replace with your infrastructure repo
-  SERVICE_NAME: cloud-ops-nodejs-ms  # Replace with your service name
-  PROJECT_NAME: dev-client-name  # Should match the project_name in Terraform
+  AWS_REGION: eu-west-3
+  INFRA_GIT_REPO: karthik-ak-dev/cloud-ops
+  SERVICE_NAME: cloud-ops-nodejs-ms
+  PROJECT_NAME: dev-client-name
 
 jobs:
   # First job - determine the environment based on branch
@@ -95,14 +95,14 @@ jobs:
           echo "REGISTRY=$ECR_REGISTRY" >> $GITHUB_ENV
       
       # Trigger deployment in the infrastructure repository
-      # - name: Trigger deployment
-      #   env:
-      #     ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
-      #     GH_TOKEN: ${{ secrets.INFRA_GIT_REPO_TOKEN }}
-      #   run: |
-      #     # Trigger the workflow in the infrastructure repository
-      #     curl -X POST \
-      #       -H "Authorization: token $GH_TOKEN" \
-      #       -H "Accept: application/vnd.github.v3+json" \
-      #       https://api.github.com/repos/${{ env.INFRA_GIT_REPO }}/actions/workflows/update-and-deploy.yml/dispatches \
-      #       -d "{\"ref\":\"main\",\"inputs\":{\"service\":\"${{ env.SERVICE_NAME }}\",\"environment\":\"$ENVIRONMENT\",\"image_tag\":\"$IMAGE_TAG\",\"repository\":\"$REPOSITORY\",\"registry\":\"$REGISTRY\"}}" 
+      - name: Trigger deployment
+        env:
+          ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
+          GH_TOKEN: ${{ secrets.INFRA_GIT_REPO_TOKEN }}
+        run: |
+          # Trigger the workflow in the infrastructure repository
+          curl -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ env.INFRA_GIT_REPO }}/actions/workflows/update-and-deploy.yml/dispatches \
+            -d "{\"ref\":\"main\",\"inputs\":{\"service\":\"${{ env.SERVICE_NAME }}\",\"environment\":\"$ENVIRONMENT\",\"image_tag\":\"$IMAGE_TAG\",\"region\":\"${{ env.AWS_REGION }}\"}}" 
