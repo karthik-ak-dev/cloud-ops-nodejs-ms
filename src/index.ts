@@ -52,7 +52,7 @@ const startServer = async () => {
     await cache.connect();
     
     // Start Express server
-    app.listen(config.port, () => {
+    app.listen(config.port, '0.0.0.0', () => {
       logger.info(`Server started in ${config.nodeEnv} mode on port ${config.port}`);
       logger.info(`Health check available at: http://localhost:${config.port}/health`);
     });

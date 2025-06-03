@@ -6,7 +6,7 @@ dotenv.config();
 
 // Default configuration
 const config: AppConfig = {
-  port: parseInt(process.env.PORT || '3000', 10),
+  port: parseInt(process.env.PORT || '8080', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   db: {
     host: process.env.DB_HOST || 'dev-client-name-aurora-srvless-instance-0.c7wwssaa0ugx.eu-west-3.rds.amazonaws.com',
