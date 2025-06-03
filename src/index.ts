@@ -23,8 +23,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-// API Routes
-app.use('/api', routes);
+// Health check endpoint (before API routes)
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Service is running',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// API Routes (without /api prefix)
+app.use('/', routes);
 
 // Error handling middleware
 app.use(notFound);
@@ -45,7 +54,7 @@ const startServer = async () => {
     // Start Express server
     app.listen(config.port, () => {
       logger.info(`Server started in ${config.nodeEnv} mode on port ${config.port}`);
-      logger.info(`Health check available at: http://localhost:${config.port}/api/health`);
+      logger.info(`Health check available at: http://localhost:${config.port}/health`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
