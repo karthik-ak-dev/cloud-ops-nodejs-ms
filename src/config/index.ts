@@ -16,7 +16,7 @@ const config: AppConfig = {
     password: process.env.DB_PASSWORD || 'your-srvless-strong-password-here',
   },
   redis: {
-    host: process.env.REDIS_HOST || 'dev-client-name-valkey-srvless-bop3u1.serverless.euw3.cache.amazonaws.com:6379',
+    host: process.env.REDIS_HOST || 'dev-client-name-valkey-srvless-bop3u1.serverless.euw3.cache.amazonaws.com',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD || 'your-valkey-srvless-auth-token-here',
   },
