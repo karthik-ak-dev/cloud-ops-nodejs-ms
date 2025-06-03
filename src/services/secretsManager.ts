@@ -31,7 +31,8 @@ export async function getSecrets(): Promise<AWSSecrets | null> {
       return null;
     }
     
-    throw error;
+    // throw error;
+    return null;
   }
 }
 
