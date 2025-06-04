@@ -32,6 +32,11 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Simple test endpoint to verify Express is working
+app.get('/test', (req, res) => {
+  res.status(200).json({ message: 'Express app is working' });
+});
+
 // API Routes (without /api prefix)
 app.use('/', routes);
 
@@ -42,20 +47,37 @@ app.use(errorHandler);
 // Start the server
 const startServer = async () => {
   try {
+    logger.info('Starting server initialization...');
+    
     // Load secrets from AWS Secrets Manager
+    logger.info('Loading secrets from AWS Secrets Manager...');
     await updateConfigWithSecrets();
     
     // Initialize database (create tables if they don't exist)
+    logger.info('Initializing database...');
     await db.initialize();
     
     // Connect to Redis
     await cache.connect();
     
-    // Start Express server
-    app.listen(config.port, '0.0.0.0', () => {
+    logger.info('All services initialized, starting HTTP server...');
+    
+    // Start Express server with proper error handling
+    const server = app.listen(config.port, '0.0.0.0', () => {
       logger.info(`Server started in ${config.nodeEnv} mode on port ${config.port}`);
       logger.info(`Health check available at: http://localhost:${config.port}/health`);
     });
+    
+    // Handle server errors
+    server.on('error', (error: any) => {
+      logger.error('HTTP server error:', error);
+      if (error.code === 'EADDRINUSE') {
+        logger.error(`Port ${config.port} is already in use`);
+      }
+      process.exit(1);
+    });
+    
+    logger.info('HTTP server listen call completed');
   } catch (error) {
     logger.error('Failed to start server:', error);
     process.exit(1);
